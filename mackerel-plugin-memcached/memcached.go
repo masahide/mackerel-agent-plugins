@@ -143,6 +143,64 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "bytes", Label: "Used", Diff: false, Type: "uint64"},
 			},
 		},
+		"chunks.slabs.#": mp.Graphs{
+			Label: "Slabs stats",
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "used_chunks", Label: "used_chunks", Diff: false, Stacked: true},
+				mp.Metrics{Name: "free_chunks", Label: "free_chunks", Diff: false, Stacked: true},
+			},
+		},
+		"hists.slabs.#": mp.Graphs{
+			Label: "Slabs hits",
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "get_hits", Label: "get_hits", Diff: true, Stacked: false},
+				mp.Metrics{Name: "cmd_set", Label: "cmd_set", Diff: false, Stacked: false},
+				mp.Metrics{Name: "delete_hits", Label: "delete_hits", Diff: true, Stacked: false},
+				mp.Metrics{Name: "incr_hits", Label: "incr_hits", Diff: true, Stacked: false},
+				mp.Metrics{Name: "decr_hits", Label: "decr_hits", Diff: true, Stacked: false},
+				mp.Metrics{Name: "cas_hits", Label: "cas_hits", Diff: true, Stacked: false},
+				mp.Metrics{Name: "cas_badval", Label: "cas_badval", Diff: true, Stacked: false},
+				mp.Metrics{Name: "touch_hits", Label: "touch_hits", Diff: true, Stacked: false},
+			},
+		},
+		"chunk.slabs.#": mp.Graphs{
+			Label: "Slabs stats",
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "chunk_size", Label: "chunk_size", Diff: false, Stacked: false},
+				mp.Metrics{Name: "chunks_per_page", Label: "chunks_per_page", Diff: false, Stacked: false},
+			},
+		},
+		"chunk_size_per_slab": mp.Graphs{
+			Label: "chunk_size per slab class",
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "chunk_size", Label: "chunk_size", Diff: false, Stacked: false},
+			},
+		},
+		"chunk_size_perslab_per_slab": mp.Graphs{
+			Label: "chunk_size per slab class",
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "chunks_per_page", Label: "chunks_per_page", Diff: false, Stacked: false},
+			},
+		},
+		"total_pages_per_slab": mp.Graphs{
+			Label: "total_pages per slab class",
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "total_pages", Label: "total_pages", Diff: false, Stacked: false},
+			},
+		},
+		"mem_requested_per_slab": mp.Graphs{
+			Label: "mem_requested per slab class",
+			Unit:  "bytes",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "mem_requested", Label: "mem_requested", Diff: false, Stacked: true},
+			},
+		},
 	}
 	return graphdef
 }
