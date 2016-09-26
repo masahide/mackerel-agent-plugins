@@ -19,6 +19,8 @@ type MemcachedPlugin struct {
 	Prefix   string
 }
 
+type statSlab map[string]string
+
 // MetricKeyPrefix interface for PluginWithPrefix
 func (m MemcachedPlugin) MetricKeyPrefix() string {
 	if m.Prefix == "" {
@@ -57,6 +59,35 @@ func (m MemcachedPlugin) parseStats(conn io.Reader) (map[string]interface{}, err
 		res := strings.Split(s, " ")
 		if res[0] == "STAT" {
 			stat[res[1]] = res[2]
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return stat, err
+	}
+	return nil, nil
+}
+
+func (m MemcachedPlugin) parseStatsSlabs(conn io.Reader) (map[string]statSlab, error) {
+	scanner := bufio.NewScanner(conn)
+	stat := make(map[string]statSlab)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		s := string(line)
+		if s == "END" {
+			return stat, nil
+		}
+
+		res := strings.Split(s, " ")
+		if res[0] == "STAT" {
+			key := strings.Split(s, ":")
+			if len(key) < 2 {
+				continue
+			}
+			if ok, _ := stat[key]; !ok {
+				stat[key[0]] = make(statSlab)
+			}
+			stat[key[0]][key[1]] = res[2]
 		}
 	}
 	if err := scanner.Err(); err != nil {
