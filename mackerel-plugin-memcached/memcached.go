@@ -105,6 +105,9 @@ func (m MemcachedPlugin) parseStatsSlabs(conn io.Reader, stat map[string]interfa
 
 func statsSlabsKey(key []string) string {
 	class := key[0]
+	if len(class) == 1 {
+		class = "0" + class
+	}
 	statKey := key[1]
 	switch statKey {
 	case "used_chunks", "free_chunks":
@@ -196,7 +199,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 			},
 		},
 		"chunks.slab.#": mp.Graphs{
-			Label: "chunks",
+			Label: (labelPrefix + " Chunks"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "used_chunks", Label: "used_chunks", Diff: false, Stacked: true},
@@ -204,7 +207,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 			},
 		},
 		"hits.slab.#": mp.Graphs{
-			Label: "Slabs hits",
+			Label: (labelPrefix + " Slabs Hits"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "get_hits", Label: "get_hits", Diff: true, Stacked: false},
@@ -218,28 +221,28 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 			},
 		},
 		"chunk_size.slab.#": mp.Graphs{
-			Label: "Slabs stats",
+			Label: (labelPrefix + " Slabs Stats"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "chunk_size", Label: "chunk_size", Diff: false, Stacked: false},
 			},
 		},
 		"chunks_per_page.slab.#": mp.Graphs{
-			Label: "Chunks per page",
+			Label: (labelPrefix + " Chunks Per Page"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "chunks_per_page", Label: "chunks_per_page", Diff: false, Stacked: false},
 			},
 		},
 		"total_pages.slab.#": mp.Graphs{
-			Label: "total_pages",
+			Label: (labelPrefix + " Total Pages"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "total_pages", Label: "total_pages", Diff: false, Stacked: false},
 			},
 		},
 		"mem_requested.slab.#": mp.Graphs{
-			Label: "mem_requested",
+			Label: (labelPrefix + " Mem Requested"),
 			Unit:  "bytes",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "mem_requested", Label: "mem_requested", Diff: false, Stacked: true},
