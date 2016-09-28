@@ -13,13 +13,12 @@ import (
 
 // MemcachedPlugin mackerel plugin for memchached
 type MemcachedPlugin struct {
-	Target   string
-	Socket   string
-	Tempfile string
-	Prefix   string
+	Target     string
+	Socket     string
+	Tempfile   string
+	Prefix     string
+	StatsSlabs bool
 }
-
-type statSlab map[string]string
 
 // MetricKeyPrefix interface for PluginWithPrefix
 func (m MemcachedPlugin) MetricKeyPrefix() string {
@@ -42,7 +41,15 @@ func (m MemcachedPlugin) FetchMetrics() (map[string]interface{}, error) {
 		return nil, err
 	}
 	fmt.Fprintln(conn, "stats")
-	return m.parseStats(conn)
+	stat, err := m.parseStats(conn)
+	if err != nil {
+		return stat, err
+	}
+	if m.StatsSlabs {
+		fmt.Fprintln(conn, "stats slabs")
+		err = m.parseStatsSlabs(conn, stat)
+	}
+	return stat, err
 }
 
 func (m MemcachedPlugin) parseStats(conn io.Reader) (map[string]interface{}, error) {
@@ -67,33 +74,47 @@ func (m MemcachedPlugin) parseStats(conn io.Reader) (map[string]interface{}, err
 	return nil, nil
 }
 
-func (m MemcachedPlugin) parseStatsSlabs(conn io.Reader) (map[string]statSlab, error) {
+func (m MemcachedPlugin) parseStatsSlabs(conn io.Reader, stat map[string]interface{}) error {
 	scanner := bufio.NewScanner(conn)
-	stat := make(map[string]statSlab)
 
 	for scanner.Scan() {
 		line := scanner.Text()
 		s := string(line)
 		if s == "END" {
-			return stat, nil
+			return nil
 		}
 
 		res := strings.Split(s, " ")
 		if res[0] == "STAT" {
-			key := strings.Split(s, ":")
+			key := strings.Split(res[1], ":")
 			if len(key) < 2 {
 				continue
 			}
-			if ok, _ := stat[key]; !ok {
-				stat[key[0]] = make(statSlab)
+			statKey := statsSlabsKey(key)
+			if statKey == "" {
+				continue
 			}
-			stat[key[0]][key[1]] = res[2]
+			stat[statKey] = res[2]
 		}
 	}
 	if err := scanner.Err(); err != nil {
-		return stat, err
+		return err
 	}
-	return nil, nil
+	return nil
+}
+
+func statsSlabsKey(key []string) string {
+	class := key[0]
+	statKey := key[1]
+	switch statKey {
+	case "used_chunks", "free_chunks":
+		return fmt.Sprintf("chunks.slab.class%s.%s", class, statKey)
+	case "get_hits", "cmd_set", "delete_hits", "incr_hits", "decr_hits", "cas_hits", "cas_badval", "touch_hits":
+		return fmt.Sprintf("hits.slab.class%s.%s", class, statKey)
+	case "chunk_size", "chunks_per_page", "total_pages", "mem_requested":
+		return fmt.Sprintf("%s.slab.class%s.%s", statKey, class, statKey)
+	}
+	return ""
 }
 
 // GraphDefinition interface for mackerelplugin
@@ -174,15 +195,15 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "bytes", Label: "Used", Diff: false, Type: "uint64"},
 			},
 		},
-		"chunks.slabs.#": mp.Graphs{
-			Label: "Slabs stats",
+		"chunks.slab.#": mp.Graphs{
+			Label: "chunks",
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "used_chunks", Label: "used_chunks", Diff: false, Stacked: true},
 				mp.Metrics{Name: "free_chunks", Label: "free_chunks", Diff: false, Stacked: true},
 			},
 		},
-		"hists.slabs.#": mp.Graphs{
+		"hits.slab.#": mp.Graphs{
 			Label: "Slabs hits",
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
@@ -196,37 +217,29 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "touch_hits", Label: "touch_hits", Diff: true, Stacked: false},
 			},
 		},
-		"chunk.slabs.#": mp.Graphs{
+		"chunk_size.slab.#": mp.Graphs{
 			Label: "Slabs stats",
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "chunk_size", Label: "chunk_size", Diff: false, Stacked: false},
-				mp.Metrics{Name: "chunks_per_page", Label: "chunks_per_page", Diff: false, Stacked: false},
 			},
 		},
-		"chunk_size_per_slab": mp.Graphs{
-			Label: "chunk_size per slab class",
-			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "chunk_size", Label: "chunk_size", Diff: false, Stacked: false},
-			},
-		},
-		"chunk_size_perslab_per_slab": mp.Graphs{
-			Label: "chunk_size per slab class",
+		"chunks_per_page.slab.#": mp.Graphs{
+			Label: "Chunks per page",
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "chunks_per_page", Label: "chunks_per_page", Diff: false, Stacked: false},
 			},
 		},
-		"total_pages_per_slab": mp.Graphs{
-			Label: "total_pages per slab class",
+		"total_pages.slab.#": mp.Graphs{
+			Label: "total_pages",
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "total_pages", Label: "total_pages", Diff: false, Stacked: false},
 			},
 		},
-		"mem_requested_per_slab": mp.Graphs{
-			Label: "mem_requested per slab class",
+		"mem_requested.slab.#": mp.Graphs{
+			Label: "mem_requested",
 			Unit:  "bytes",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "mem_requested", Label: "mem_requested", Diff: false, Stacked: true},
@@ -242,6 +255,7 @@ func main() {
 	optSocket := flag.String("socket", "", "Server socket (overrides hosts and port)")
 	optPrefix := flag.String("metric-key-prefix", "memcached", "Metric key prefix")
 	optTempfile := flag.String("tempfile", "", "Temp file name")
+	optStatsSlabs := flag.Bool("stats-slabs", false, "get stats slabs")
 	flag.Parse()
 
 	var memcached MemcachedPlugin
@@ -253,6 +267,7 @@ func main() {
 	} else {
 		memcached.Target = fmt.Sprintf("%s:%s", *optHost, *optPort)
 	}
+	memcached.StatsSlabs = *optStatsSlabs
 	helper := mp.NewMackerelPlugin(memcached)
 	helper.Tempfile = *optTempfile
 	helper.Run()
