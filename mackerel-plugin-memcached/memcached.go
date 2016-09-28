@@ -211,7 +211,7 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
 				mp.Metrics{Name: "get_hits", Label: "get_hits", Diff: true, Stacked: false},
-				mp.Metrics{Name: "cmd_set", Label: "cmd_set", Diff: false, Stacked: false},
+				mp.Metrics{Name: "cmd_set", Label: "cmd_set", Diff: true, Stacked: false},
 				mp.Metrics{Name: "delete_hits", Label: "delete_hits", Diff: true, Stacked: false},
 				mp.Metrics{Name: "incr_hits", Label: "incr_hits", Diff: true, Stacked: false},
 				mp.Metrics{Name: "decr_hits", Label: "decr_hits", Diff: true, Stacked: false},
