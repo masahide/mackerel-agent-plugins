@@ -87,7 +87,7 @@ func (m MemcachedPlugin) parseStatsSlabs(stat map[string]interface{}, conn io.Re
 		if len(key) < 2 {
 			return
 		}
-		statKey := statsSlabsKey(key)
+		statKey := m.statsSlabsKey(key)
 		if statKey == "" {
 			return
 		}
@@ -100,7 +100,7 @@ func (m MemcachedPlugin) parseStatsItems(stat map[string]interface{}, conn io.Re
 		if len(key) < 3 {
 			return
 		}
-		statKey := statsSlabsKey(key[1:])
+		statKey := m.statsSlabsKey(key[1:])
 		if statKey == "" {
 			return
 		}
@@ -108,27 +108,27 @@ func (m MemcachedPlugin) parseStatsItems(stat map[string]interface{}, conn io.Re
 	})
 }
 
-func statsSlabsKey(key []string) string {
+func (m MemcachedPlugin) statsSlabsKey(key []string) string {
 	class := key[0]
 	if len(class) == 1 {
 		class = "0" + class
 	}
 	statKey := key[1]
 	switch statKey {
-	// stats slabs
-	case "used_chunks", "free_chunks":
-		return fmt.Sprintf("chunks.slab.class%s.%s", class, statKey)
 	case "get_hits", "cmd_set", "delete_hits", "incr_hits", "decr_hits", "cas_hits", "cas_badval", "touch_hits":
 		return fmt.Sprintf("hits.slab.class%s.%s", class, statKey)
-	case "chunk_size", "chunks_per_page", "total_pages", "mem_requested":
+	case /*"chunk_size", "chunks_per_page", "total_pages",*/ "mem_requested":
 		return fmt.Sprintf("%s.slab.class%s.%s", statKey, class, statKey)
-	// stats itmes
-	case "number", "age", "evicted_time":
+	case /*"number", "age",*/ "evicted_time":
 		return fmt.Sprintf("%s.slab.class%s.%s", statKey, class, statKey)
-	case "evicted", "evicted_nonzero", "outofmemory", "tailrepairs", "reclaimed":
-		return fmt.Sprintf("number_of_times.slab.class%s.%s", class, statKey)
 	case "expired_unfetched", "evicted_unfetched", "crawler_reclaimed", "crawler_items_checked", "lrutail_reflocked":
 		return fmt.Sprintf("number_of_items.slab.class%s.%s", class, statKey)
+		/*
+			case "used_chunks", "free_chunks":
+				return fmt.Sprintf("chunks.slab.class%s.%s", class, statKey)
+			case "evicted", "evicted_nonzero", "outofmemory", "tailrepairs", "reclaimed":
+				return fmt.Sprintf("number_of_times.slab.class%s.%s", class, statKey)
+		*/
 	}
 	return ""
 }
@@ -211,12 +211,11 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "bytes", Label: "Used", Diff: false, Type: "uint64"},
 			},
 		},
-		"chunks.slab.#": mp.Graphs{
-			Label: (labelPrefix + " Chunks"),
+		"items": mp.Graphs{
+			Label: (labelPrefix + " Items"),
 			Unit:  "integer",
 			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "used_chunks", Label: "used_chunks", Diff: false, Stacked: true, Type: "uint64"},
-				mp.Metrics{Name: "free_chunks", Label: "free_chunks", Diff: false, Stacked: true, Type: "uint64"},
+				mp.Metrics{Name: "curr_items", Label: "Current Items", Diff: false},
 			},
 		},
 		"hits.slab.#": mp.Graphs{
@@ -233,27 +232,37 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "touch_hits", Label: "touch_hits", Diff: true, Stacked: false, Type: "uint64"},
 			},
 		},
-		"chunk_size.slab.#": mp.Graphs{
-			Label: (labelPrefix + " Slabs Stats"),
-			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "chunk_size", Label: "chunk_size", Diff: false, Stacked: false, Type: "uint64"},
+		/*
+			"chunks.slab.#": mp.Graphs{
+				Label: (labelPrefix + " Chunks"),
+				Unit:  "integer",
+				Metrics: [](mp.Metrics){
+					mp.Metrics{Name: "used_chunks", Label: "used_chunks", Diff: false, Stacked: true, Type: "uint64"},
+					mp.Metrics{Name: "free_chunks", Label: "free_chunks", Diff: false, Stacked: true, Type: "uint64"},
+				},
 			},
-		},
-		"chunks_per_page.slab.#": mp.Graphs{
-			Label: (labelPrefix + " Chunks Per Page"),
-			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "chunks_per_page", Label: "chunks_per_page", Diff: false, Stacked: false, Type: "uint64"},
+			"chunk_size.slab.#": mp.Graphs{
+				Label: (labelPrefix + " Slabs Stats"),
+				Unit:  "integer",
+				Metrics: [](mp.Metrics){
+					mp.Metrics{Name: "chunk_size", Label: "chunk_size", Diff: false, Stacked: false, Type: "uint64"},
+				},
 			},
-		},
-		"total_pages.slab.#": mp.Graphs{
-			Label: (labelPrefix + " Total Pages"),
-			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "total_pages", Label: "total_pages", Diff: false, Stacked: false, Type: "uint64"},
+			"chunks_per_page.slab.#": mp.Graphs{
+				Label: (labelPrefix + " Chunks Per Page"),
+				Unit:  "integer",
+				Metrics: [](mp.Metrics){
+					mp.Metrics{Name: "chunks_per_page", Label: "chunks_per_page", Diff: false, Stacked: false, Type: "uint64"},
+				},
 			},
-		},
+			"total_pages.slab.#": mp.Graphs{
+				Label: (labelPrefix + " Total Pages"),
+				Unit:  "integer",
+				Metrics: [](mp.Metrics){
+					mp.Metrics{Name: "total_pages", Label: "total_pages", Diff: false, Stacked: false, Type: "uint64"},
+				},
+			},
+		*/
 		"mem_requested.slab.#": mp.Graphs{
 			Label: (labelPrefix + " Mem Requested"),
 			Unit:  "bytes",
@@ -261,20 +270,22 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "mem_requested", Label: "mem_requested", Diff: false, Stacked: true, Type: "uint64"},
 			},
 		},
-		"number.slab.#": mp.Graphs{
-			Label: (labelPrefix + " Number of items"),
-			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "number", Label: "number", Diff: false, Stacked: false, Type: "uint64"},
+		/*
+			"number.slab.#": mp.Graphs{
+				Label: (labelPrefix + " Number of items"),
+				Unit:  "integer",
+				Metrics: [](mp.Metrics){
+					mp.Metrics{Name: "number", Label: "number", Diff: false, Stacked: false, Type: "uint64"},
+				},
 			},
-		},
-		"age.slab.#": mp.Graphs{
-			Label: (labelPrefix + " Age of the oldest item"),
-			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "age", Label: "age", Diff: false, Stacked: false, Type: "uint64"},
+			"age.slab.#": mp.Graphs{
+				Label: (labelPrefix + " Age of the oldest item"),
+				Unit:  "integer",
+				Metrics: [](mp.Metrics){
+					mp.Metrics{Name: "age", Label: "age", Diff: false, Stacked: false, Type: "uint64"},
+				},
 			},
-		},
+		*/
 		"evicted_time.slab.#": mp.Graphs{
 			Label: (labelPrefix + " Time of the last evicted entry"),
 			Unit:  "integer",
@@ -282,17 +293,19 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "evicted_time", Label: "evicted_time", Diff: false, Stacked: false, Type: "uint64"},
 			},
 		},
-		"number_of_times.slab.#": mp.Graphs{
-			Label: (labelPrefix + " Number of times"),
-			Unit:  "integer",
-			Metrics: [](mp.Metrics){
-				mp.Metrics{Name: "evicted", Label: "evicted", Diff: true, Stacked: false, Type: "uint64"},
-				mp.Metrics{Name: "evicted_nonzero", Label: "evicted_nonzero", Diff: true, Stacked: false, Type: "uint64"},
-				mp.Metrics{Name: "outofmemory", Label: "outofmemory", Diff: true, Stacked: false, Type: "uint64"},
-				mp.Metrics{Name: "tailrepairs", Label: "tailrepairs", Diff: true, Stacked: false, Type: "uint64"},
-				mp.Metrics{Name: "reclaimed", Label: "reclaimed", Diff: true, Stacked: false, Type: "uint64"},
+		/*
+			"number_of_times.slab.#": mp.Graphs{
+				Label: (labelPrefix + " Number of times"),
+				Unit:  "integer",
+				Metrics: [](mp.Metrics){
+					mp.Metrics{Name: "evicted", Label: "evicted", Diff: true, Stacked: false, Type: "uint64"},
+					mp.Metrics{Name: "evicted_nonzero", Label: "evicted_nonzero", Diff: true, Stacked: false, Type: "uint64"},
+					mp.Metrics{Name: "outofmemory", Label: "outofmemory", Diff: true, Stacked: false, Type: "uint64"},
+					mp.Metrics{Name: "tailrepairs", Label: "tailrepairs", Diff: true, Stacked: false, Type: "uint64"},
+					mp.Metrics{Name: "reclaimed", Label: "reclaimed", Diff: true, Stacked: false, Type: "uint64"},
+				},
 			},
-		},
+		*/
 		"number_of_items.slab.#": mp.Graphs{
 			Label: (labelPrefix + " Number of items"),
 			Unit:  "integer",
