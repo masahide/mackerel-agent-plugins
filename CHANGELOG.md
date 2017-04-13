@@ -1,5 +1,76 @@
 # Changelog
 
+## 0.25.6 (2017-04-06)
+
+* Cross compile by go's native cross build, not by gox #321 (astj)
+* fix a label of gostats plugin #323 (itchyny)
+
+
+## 0.25.5 (2017-03-22)
+
+* add `mackerel-plugin` command #315 (Songmu)
+* Add AWS WAF Plugin #316 (holidayworking)
+* use new bot token #318 (daiksy)
+* use new bot token #319 (daiksy)
+
+
+## 0.25.4 (2017-02-22)
+
+* Improve gce plugin #313 (astj)
+
+
+## 0.25.3 (2017-02-16)
+
+* Feature/gcp compute engine #304 (littlekbt)
+* [aws-rds] Make it possible to get metrics from Aurora. #307 (TakashiKaga)
+* [multicore]fix tempfile path #311 (daiksy)
+
+
+## 0.25.2 (2017-02-08)
+
+* [aws-rds] fix metric name #306 (TakashiKaga)
+* [aws-ses] ses.stats is unit type #308 (holidayworking)
+* [aws-cloudfront] Fix regression #295 #309 (astj)
+
+
+## 0.25.1 (2017-01-25)
+
+* Make more plugins to support MACKEREL_PLUGIN_WORKDIR #301 (astj)
+* [jvm] Fix the label and scale #302 (itchyny)
+* [aws-rds] Support Aurora metrics and refactoring #303 (sioncojp)
+
+
+## 0.25.0 (2017-01-04)
+
+* Change directory structure convention of each plugin #289 (Songmu)
+* [apache2] fix typo in graphdef #291 (astj)
+* [apache2] Change metric name not to end with dot #293 (astj)
+* add mackerel-plugin-windows-server-sessions #294 (daiksy)
+* migrate from goamz to aws-sdk-go #295 (astj)
+* [docker] Add timeout for API request #296 (astj)
+
+
+## 0.24.0 (2016-11-29)
+
+* Implement mackerel-plugin-aws-ec2 #248 (yyoshiki41)
+* [postgres] support Pg9.1 #274 (Songmu)
+* Add new nvidia-smi plugin #280 (ksauzz)
+* [jvm] Add notice about user to README #281 (astj)
+* Implement mackerel-plugin-twemproxy #283 (yoheimuta)
+* fix cloudwatch dimensions for elb #284 (ki38sato)
+* Change error strings to pass current golint #285 (astj)
+* Add mackerel-plugin-twemproxy to package #286 (stefafafan)
+
+
+## 0.23.1 (2016-10-27)
+
+* [redis] Fix a bug to fetch no metrics of keys and expired #272 (yoheimuta)
+* fix: "open file descriptors" property in elasticsearch  #273 (kamijin-fanta)
+* [memcached] Supported memcached curr_items metric #275 (kakakakakku)
+* [memcached] support new_items metrics #276 (Songmu)
+* [redis] s/memoty/memory/ #277 (astj)
+
+
 ## 0.23.0 (2016-10-18)
 
 * mackerel-plugin-linux: Allow to select multiple (but not all) sets of metrics #243 (astj)

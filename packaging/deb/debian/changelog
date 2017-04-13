@@ -1,3 +1,118 @@
+mackerel-agent-plugins (0.25.6-1) stable; urgency=low
+
+  * Cross compile by go's native cross build, not by gox (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/321>
+  * fix a label of gostats plugin (by itchyny)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/323>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 06 Apr 2017 02:50:55 +0000
+
+mackerel-agent-plugins (0.25.5-1) stable; urgency=low
+
+  * add `mackerel-plugin` command (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/315>
+  * Add AWS WAF Plugin (by holidayworking)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/316>
+  * use new bot token (by daiksy)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/318>
+  * use new bot token (by daiksy)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/319>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 22 Mar 2017 08:13:37 +0000
+
+mackerel-agent-plugins (0.25.4-1) stable; urgency=low
+
+  * Improve gce plugin (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/313>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 22 Feb 2017 03:00:56 +0000
+
+mackerel-agent-plugins (0.25.3-1) stable; urgency=low
+
+  * Feature/gcp compute engine (by littlekbt)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/304>
+  * [aws-rds] Make it possible to get metrics from Aurora. (by TakashiKaga)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/307>
+  * [multicore]fix tempfile path (by daiksy)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/311>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 16 Feb 2017 04:34:10 +0000
+
+mackerel-agent-plugins (0.25.2-1) stable; urgency=low
+
+  * [aws-rds] fix metric name (by TakashiKaga)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/306>
+  * [aws-ses] ses.stats is unit type (by holidayworking)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/308>
+  * [aws-cloudfront] Fix regression #295 (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/309>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 08 Feb 2017 02:09:23 +0000
+
+mackerel-agent-plugins (0.25.1-1) stable; urgency=low
+
+  * Make more plugins to support MACKEREL_PLUGIN_WORKDIR (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/301>
+  * [jvm] Fix the label and scale (by itchyny)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/302>
+  * [aws-rds] Support Aurora metrics and refactoring (by sioncojp)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/303>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 25 Jan 2017 06:45:39 +0000
+
+mackerel-agent-plugins (0.25.0-1) stable; urgency=low
+
+  * Change directory structure convention of each plugin (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/289>
+  * [apache2] fix typo in graphdef (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/291>
+  * [apache2] Change metric name not to end with dot (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/293>
+  * add mackerel-plugin-windows-server-sessions (by daiksy)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/294>
+  * migrate from goamz to aws-sdk-go (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/295>
+  * [docker] Add timeout for API request (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/296>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Wed, 04 Jan 2017 07:28:06 +0000
+
+mackerel-agent-plugins (0.24.0-1) stable; urgency=low
+
+  * Implement mackerel-plugin-aws-ec2 (by yyoshiki41)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/248>
+  * [postgres] support Pg9.1 (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/274>
+  * Add new nvidia-smi plugin (by ksauzz)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/280>
+  * [jvm] Add notice about user to README (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/281>
+  * Implement mackerel-plugin-twemproxy (by yoheimuta)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/283>
+  * fix cloudwatch dimensions for elb (by ki38sato)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/284>
+  * Change error strings to pass current golint (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/285>
+  * Add mackerel-plugin-twemproxy to package (by stefafafan)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/286>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Tue, 29 Nov 2016 06:18:37 +0000
+
+mackerel-agent-plugins (0.23.1-1) stable; urgency=low
+
+  * [redis] Fix a bug to fetch no metrics of keys and expired (by yoheimuta)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/272>
+  * fix: "open file descriptors" property in elasticsearch  (by kamijin-fanta)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/273>
+  * [memcached] Supported memcached curr_items metric (by kakakakakku)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/275>
+  * [memcached] support new_items metrics (by Songmu)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/276>
+  * [redis] s/memoty/memory/ (by astj)
+    <https://github.com/mackerelio/mackerel-agent-plugins/pull/277>
+
+ -- mackerel <mackerel-developers@hatena.ne.jp>  Thu, 27 Oct 2016 04:40:46 +0000
+
 mackerel-agent-plugins (0.23.0-1) stable; urgency=low
 
   * mackerel-plugin-linux: Allow to select multiple (but not all) sets of metrics (by astj)
