@@ -198,6 +198,13 @@ func (m MemcachedPlugin) GraphDefinition() map[string](mp.Graphs) {
 				mp.Metrics{Name: "bytes", Label: "Used", Diff: false, Type: "uint64"},
 			},
 		},
+		"items": mp.Graphs{
+			Label: (labelPrefix + " Items"),
+			Unit:  "integer",
+			Metrics: [](mp.Metrics){
+				mp.Metrics{Name: "curr_items", Label: "Current Items", Diff: false},
+			},
+		},
 		"chunks.slab.#": mp.Graphs{
 			Label: (labelPrefix + " Chunks"),
 			Unit:  "integer",
