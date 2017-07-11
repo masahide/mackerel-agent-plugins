@@ -49,6 +49,59 @@ done
 %{__oldtargetdir}/*
 
 %changelog
+* Thu Apr 06 2017 <mackerel-developers@hatena.ne.jp> - 0.25.6-1
+- Cross compile by go's native cross build, not by gox (by astj)
+- fix a label of gostats plugin (by itchyny)
+
+* Wed Mar 22 2017 <mackerel-developers@hatena.ne.jp> - 0.25.5-1
+- add `mackerel-plugin` command (by Songmu)
+- Add AWS WAF Plugin (by holidayworking)
+- use new bot token (by daiksy)
+- use new bot token (by daiksy)
+
+* Wed Feb 22 2017 <mackerel-developers@hatena.ne.jp> - 0.25.4-1
+- Improve gce plugin (by astj)
+
+* Thu Feb 16 2017 <mackerel-developers@hatena.ne.jp> - 0.25.3-1
+- Feature/gcp compute engine (by littlekbt)
+- [aws-rds] Make it possible to get metrics from Aurora. (by TakashiKaga)
+- [multicore]fix tempfile path (by daiksy)
+
+* Wed Feb 08 2017 <mackerel-developers@hatena.ne.jp> - 0.25.2-1
+- [aws-rds] fix metric name (by TakashiKaga)
+- [aws-ses] ses.stats is unit type (by holidayworking)
+- [aws-cloudfront] Fix regression #295 (by astj)
+
+* Wed Jan 25 2017 <mackerel-developers@hatena.ne.jp> - 0.25.1-1
+- Make more plugins to support MACKEREL_PLUGIN_WORKDIR (by astj)
+- [jvm] Fix the label and scale (by itchyny)
+- [aws-rds] Support Aurora metrics and refactoring (by sioncojp)
+
+* Wed Jan 04 2017 <mackerel-developers@hatena.ne.jp> - 0.25.0-1
+- Change directory structure convention of each plugin (by Songmu)
+- [apache2] fix typo in graphdef (by astj)
+- [apache2] Change metric name not to end with dot (by astj)
+- add mackerel-plugin-windows-server-sessions (by daiksy)
+- migrate from goamz to aws-sdk-go (by astj)
+- [docker] Add timeout for API request (by astj)
+
+* Tue Nov 29 2016 <mackerel-developers@hatena.ne.jp> - 0.24.0-1
+- Implement mackerel-plugin-aws-ec2 (by yyoshiki41)
+- [postgres] support Pg9.1 (by Songmu)
+- Add new nvidia-smi plugin (by ksauzz)
+- [jvm] Add notice about user to README (by astj)
+- Implement mackerel-plugin-twemproxy (by yoheimuta)
+- fix cloudwatch dimensions for elb (by ki38sato)
+- Change error strings to pass current golint (by astj)
+- Add mackerel-plugin-twemproxy to package (by stefafafan)
+
+* Thu Oct 27 2016 <mackerel-developers@hatena.ne.jp> - 0.23.1-1
+- [redis] Fix a bug to fetch no metrics of keys and expired (by yoheimuta)
+- fix: "open file descriptors" property in elasticsearch  (by kamijin-fanta)
+- [memcached] Supported memcached curr_items metric (by kakakakakku)
+- [memcached] support new_items metrics (by Songmu)
+- [redis] s/memoty/memory/ (by astj)
+
 * Tue Oct 18 2016 <mackerel-developers@hatena.ne.jp> - 0.23.0-1
 - mackerel-plugin-linux: Allow to select multiple (but not all) sets of metrics (by astj)
 - Fixed flag comment of mackerel-plugin-fluentd (by kakakakakku)
